@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * Implement hook_menu().
+ */
+function connections_menu() {
+  $items = array();
+  
+  $items['admin/config/system/connections'] = array(
+    'title' => 'Site Connections',
+    'description' => 'Links to site\'s contact and social network pages',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('connections_link_form'),
+    'access arguments' => array('administer connections'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function connections_permission() {
+  return array(
+    'administer connections' => array(
+      'title' => 'Administer site connections',
+      'description' => 'Edit links to site\'s contact and social network pages',
+      'restrict access' => TRUE,
+    ),
+  );
+}
+
+/**
+ * Form builder: create links for the sites social network pages
+ */
+function connections_link_form($form, &$form_state) {
+  // Textfield for Facebook url
+  $form['connections_facebook_url'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('connections_facebook_url', NULL),
+    '#title' => 'Facebook url',
+    '#size' => 40,
+    '#maxlength' => 120,
+  );
+  
+  // Textfield for Twitter url
+  $form['connections_twitter_url'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('connections_twitter_url', NULL),
+    '#title' => 'Twitter url',
+    '#size' => 40,
+    '#maxlength' => 120,
+  );
+  
+  // Textfield for Google plus url
+  $form['connections_gplus_url'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('connections_gplus_url', NULL),
+    '#title' => 'Google plus url',
+    '#size' => 40,
+    '#maxlength' => 120,
+  );
+  
+  return system_settings_form($form);
+}
+
+/**
+ * Form validation function for 'connections_link_form'
+ */
+function connections_link_form_validate($form, &$form_state) {
+  if (!empty($form_state['values']['connections_facebook_url']) && !connections_valid_url($form_state['values']['connections_facebook_url'])) {
+    form_set_error('connections_facebook_url', 'Facebook url is not a valid URL');
+  }
+  
+  if (!empty($form_state['values']['connections_twitter_url']) && !connections_valid_url($form_state['values']['connections_twitter_url'])) {
+    form_set_error('connections_twitter_url', 'Twitter url is not a valid URL');
+  }
+  
+  if (!empty($form_state['values']['connections_gplus_url']) && !connections_valid_url($form_state['values']['connections_gplus_url'])) {
+    form_set_error('connections_gplus_url', 'Google plus url is not a valid URL');
+  }
+}
+
+
+function connections_valid_url($url) {
+  return (bool) preg_match('_^(?:(?:https?|ftp)://)?(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\x{00a1}-\x{ffff}0-9]+-?)*[a-z\x{00a1}-\x{ffff}0-9]+)(?:\.(?:[a-z\x{00a1}-\x{ffff}0-9]+-?)*[a-z\x{00a1}-\x{ffff}0-9]+)*(?:\.(?:[a-z\x{00a1}-\x{ffff}]{2,})))(?::\d{2,5})?(?:/[^\s]*)?$_iuS', $url);
+}
