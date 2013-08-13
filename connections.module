@@ -39,6 +39,7 @@ function connections_link_form($form, &$form_state) {
   $form['connections_facebook_url'] = array(
     '#type' => 'textfield',
     '#default_value' => variable_get('connections_facebook_url', NULL),
+    '#description' => 'Please append protocol eg. http://',
     '#title' => 'Facebook url',
     '#size' => 40,
     '#maxlength' => 120,
@@ -48,6 +49,7 @@ function connections_link_form($form, &$form_state) {
   $form['connections_twitter_url'] = array(
     '#type' => 'textfield',
     '#default_value' => variable_get('connections_twitter_url', NULL),
+    '#description' => 'Please append protocol eg. http://',
     '#title' => 'Twitter url',
     '#size' => 40,
     '#maxlength' => 120,
@@ -57,6 +59,7 @@ function connections_link_form($form, &$form_state) {
   $form['connections_gplus_url'] = array(
     '#type' => 'textfield',
     '#default_value' => variable_get('connections_gplus_url', NULL),
+    '#description' => 'Please append protocol eg. http://',
     '#title' => 'Google plus url',
     '#size' => 40,
     '#maxlength' => 120,
@@ -82,7 +85,105 @@ function connections_link_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Implements hook_block_info().
+ */
+function connections_block_info() {
+  $blocks['site_connections'] = array(
+    'info' => t('Site social network links'),
+    'cache' => DRUPAL_NO_CACHE
+    // DRUPAL_CACHE_PER_ROLE will be assumed if not set.
+  );
+  
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function connections_block_view($delta = '') {
+  $block = array(); 
+
+  switch ($delta) {
+    
+    case 'site_connections':
+      $content = connections_get_links();
+      if (!empty($content)) {
+        $block['subject'] = t('Site Connections');
+        $block['content'] = $content;
+      }
+      break;
+  }
+  
+  return $block;
+}
+
+
 
 function connections_valid_url($url) {
-  return (bool) preg_match('_^(?:(?:https?|ftp)://)?(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\x{00a1}-\x{ffff}0-9]+-?)*[a-z\x{00a1}-\x{ffff}0-9]+)(?:\.(?:[a-z\x{00a1}-\x{ffff}0-9]+-?)*[a-z\x{00a1}-\x{ffff}0-9]+)*(?:\.(?:[a-z\x{00a1}-\x{ffff}]{2,})))(?::\d{2,5})?(?:/[^\s]*)?$_iuS', $url);
+  return (bool) preg_match('_^(?:(?:https?|ftp)://)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\x{00a1}-\x{ffff}0-9]+-?)*[a-z\x{00a1}-\x{ffff}0-9]+)(?:\.(?:[a-z\x{00a1}-\x{ffff}0-9]+-?)*[a-z\x{00a1}-\x{ffff}0-9]+)*(?:\.(?:[a-z\x{00a1}-\x{ffff}]{2,})))(?::\d{2,5})?(?:/[^\s]*)?$_iuS', $url);
+}
+
+
+function connections_get_links() {
+  $fb = variable_get('connections_facebook_url', NULL);
+  $twitter = variable_get('connections_twitter_url', NULL);
+  $gplus = variable_get('connections_gplus_url', NULL);
+  
+  $output = array();
+  $links = array();
+  
+  if (!empty($fb)) {
+    $links[] = array(
+      'title' => 'Facebook',
+      'href' => check_url(trim($fb)),
+      'attributes' => array(
+        'title' => 'Facebook',
+      ),
+    );
+  }
+  
+  if (!empty($twitter)) {
+    $links[] = array(
+      'title' => 'Twitter',
+      'href' => check_url(trim($twitter)),
+      'attributes' => array(
+        'title' => 'Twitter',
+      ),
+    );
+  }
+  
+  if (!empty($gplus)) {
+    $links[] = array(
+      'title' => 'Google Plus',
+      'href' => check_url(trim($gplus)),
+      'attributes' => array(
+        'title' => 'Google Plus',
+      ),
+    );
+  }
+  
+  if (module_exists('contact') && user_access('Use the site-wide contact form')) {
+    $links[] = array(
+      'title' => 'Contact Us',
+      'href' => 'contact',
+      'attributes' => array(
+        'title' => 'Contact Us',
+      ),
+    );
+  }
+  
+  // build a list of site connection links
+  if (!empty($links)) {
+    $output = array(
+      '#theme' => 'links',
+      '#links' => $links,
+      '#prefix' => '<div class="site-connections-block">',
+      '#suffix' => '</div>',
+      '#attributes' => array(
+        'class' => array('links', 'inline', 'clearfix'),
+      ),
+    );
+  }
+  return $output;
 }
