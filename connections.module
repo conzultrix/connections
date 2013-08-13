@@ -163,7 +163,7 @@ function connections_get_links() {
     );
   }
   
-  if (module_exists('contact') && user_access('Use the site-wide contact form')) {
+  if (module_exists('contact') && user_access('access site-wide contact form')) {
     $links[] = array(
       'title' => 'Contact Us',
       'href' => 'contact',
