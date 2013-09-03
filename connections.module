@@ -155,10 +155,10 @@ function connections_get_links() {
   
   if (!empty($gplus)) {
     $links[] = array(
-      'title' => 'Google Plus',
+      'title' => 'Google+',
       'href' => check_url(trim($gplus)),
       'attributes' => array(
-        'title' => 'Google Plus',
+        'title' => 'Google+',
       ),
     );
   }
