@@ -65,6 +65,16 @@ function connections_link_form($form, &$form_state) {
     '#maxlength' => 120,
   );
   
+  // Textfield for Telephone Number
+  $form['connections_telephone_no'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('connections_telephone_no', NULL),
+    '#description' => 'Please append international code',
+    '#title' => 'Phone Number',
+    '#size' => 40,
+    '#maxlength' => 120,
+  );
+  
   return system_settings_form($form);
 }
 
@@ -95,6 +105,11 @@ function connections_block_info() {
     // DRUPAL_CACHE_PER_ROLE will be assumed if not set.
   );
   
+  $blocks['telephone'] = array(
+    'info' => t('Telephone'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  
   return $blocks;
 }
 
@@ -113,6 +128,15 @@ function connections_block_view($delta = '') {
         $block['content'] = $content;
       }
       break;
+    
+    case 'telephone':
+      $content = connections_get_telephone_number();
+      if (!empty($content)) {
+        $block['subject'] = t('Telephone');
+        $block['content'] = array (
+          '#markup' => $content,
+        );
+      }
   }
   
   return $block;
@@ -139,6 +163,7 @@ function connections_get_links() {
       'href' => check_url(trim($fb)),
       'attributes' => array(
         'title' => 'Facebook',
+        'class' => array('icon', 'icon-facebook'),
       ),
     );
   }
@@ -149,6 +174,7 @@ function connections_get_links() {
       'href' => check_url(trim($twitter)),
       'attributes' => array(
         'title' => 'Twitter',
+        'class' => array('icon', 'icon-twitter'),
       ),
     );
   }
@@ -159,6 +185,7 @@ function connections_get_links() {
       'href' => check_url(trim($gplus)),
       'attributes' => array(
         'title' => 'Google+',
+        'class' => array('icon', 'icon-gplus'),
       ),
     );
   }
@@ -169,6 +196,7 @@ function connections_get_links() {
       'href' => 'contact',
       'attributes' => array(
         'title' => 'Contact Us',
+        'class' => array('icon', 'icon-contact'),
       ),
     );
   }
@@ -186,4 +214,12 @@ function connections_get_links() {
     );
   }
   return $output;
+}
+
+function connections_get_telephone_number() {
+  $phone = variable_get('connections_telephone_no', NULL);
+  
+  if (!empty($phone)) {
+    return '<div class="telephone">' . $phone . '</div>';
+  }
 }
