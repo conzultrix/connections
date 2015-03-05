@@ -105,8 +105,8 @@ function connections_block_info() {
     // DRUPAL_CACHE_PER_ROLE will be assumed if not set.
   );
   
-  $blocks['telephone'] = array(
-    'info' => t('Telephone'),
+  $blocks['contact_us'] = array(
+    'info' => t('Contact Us'),
     'cache' => DRUPAL_NO_CACHE,
   );
   
@@ -129,10 +129,14 @@ function connections_block_view($delta = '') {
       }
       break;
     
-    case 'telephone':
+    case 'contact_us':
       $content = connections_get_telephone_number();
+      $contact = connections_get_contact_link();
+      if (!empty($contact)) {
+        $content = $content . ' | ' . $contact;
+      }
       if (!empty($content)) {
-        $block['subject'] = t('Telephone');
+        $block['subject'] = t('Contact Us');
         $block['content'] = array (
           '#markup' => $content,
         );
@@ -220,6 +224,13 @@ function connections_get_telephone_number() {
   $phone = variable_get('connections_telephone_no', NULL);
   
   if (!empty($phone)) {
-    return '<div class="telephone">' . $phone . '</div>';
+    return '<span class="telephone"><a href="tel:' . $phone . '">' . $phone . '</a></span>';
+  }
+}
+
+function connections_get_contact_link() {
+  if (module_exists('contact') && user_access('access site-wide contact form')) {
+    // return link to contact page
+    return l(t('Contact Us'), 'contact', array('attributes'=>array('title' => 'Contact Us',)));
   }
 }
