@@ -139,6 +139,8 @@ function connections_block_view($delta = '') {
         $block['subject'] = t('Contact Us');
         $block['content'] = array (
           '#markup' => $content,
+	  '#prefix' => '<div class="contact-us-block">',
+	  '#suffix' => '</div>',
         );
       }
   }
