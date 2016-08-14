@@ -1,0 +1,7 @@
+connections.config_form:
+  title: 'Site Connections'
+  route_name: connections.config_form
+  description: 'Links to site's contact and social network pages'
+  parent: system.admin_config_system
+  weight: 99
+

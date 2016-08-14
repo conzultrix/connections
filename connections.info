@@ -1,5 +1,0 @@
-name = Connections
-description = Provides contact and social network links
-version = 7.x-alpha-0.1
-core = 7.x
-files[] = connections.module
