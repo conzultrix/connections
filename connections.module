@@ -25,10 +25,16 @@ function connections_help($route_name, RouteMatchInterface $route_match) {
 
 function connections_theme() {
   $theme['connections_block'] = [
-    //'variables' => ['fb' => NULL, 'twitter' => NULL, 'gplus' => NULL, 'contact' => '/contact'],
     'variables' => ['socials' => array(), 'contact' => 'contact'],
     'template' => 'connections_block',
   ];
+
+  $theme['connections_contact'] = [
+    'variables' => ['phone' => NULL, 'contact' => 'contact'],
+    'template' => 'connections_contact',
+  ];
+
+
 
   return $theme;
 }
