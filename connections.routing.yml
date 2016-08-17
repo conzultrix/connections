@@ -1,6 +1,6 @@
 
-connections.config_form:
-  path: '/admin/config/connections/config'
+connections.connections_config:
+  path: '/admin/config/system/connections'
   defaults:
     _form: '\Drupal\connections\Form\ConfigForm'
     _title: 'ConfigForm'
