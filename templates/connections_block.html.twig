@@ -1,8 +1,6 @@
 <ul>
-  {% for key, value in socials %}
-  	{% if value is not empty %}
-   		<li><a href="{{ value }}" class="icon icon-{{ key|clean_class }}">{{ key|title }}</a></li>
-  	{% endif %}
+  {% for key, value in socials if value is not empty %}
+   	<li><a href="{{ value }}" class="icon icon-{{ key|clean_class }}">{{ key|title }}</a></li>
   {% endfor %}
   <li><a href="{{ url('<front>') }}contact" class="icon icon-contact">Contact</a></li>
 </ul>
