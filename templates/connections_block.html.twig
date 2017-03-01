@@ -1,4 +1,4 @@
-<ul>
+<ul class="list-inline">
   {% for key, value in socials if value is not empty %}
    	<li><a href="{{ value }}" class="icon icon-{{ key|clean_class }}">{{ key|title }}</a></li>
   {% endfor %}
